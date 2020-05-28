@@ -130,10 +130,13 @@ void Vehicle::recieveCan() {  //need to ADD ALL the other CAN IDs possible (RC i
 	noInterrupts();
 	unsigned char len = 0;
   unsigned char buf[8];
+  Serial.println("Attempting to read");
 
   if (CAN_MSGAVAIL == CAN.checkReceive()){  //found new instructions
     CAN.readMsgBuf(&len, buf);    // read data,  len: data length, buf: data buf
     unsigned int canId = CAN.getCanId();
+    Serial.println("RECEIVED CAN MESSAGE WITH ID: " + String(canId, HEX));
+
     if (canId == HiDrive_CANID) { // the drive ID receive from high level 
 		  if (DEBUG) 
 			  Serial.println("RECEIVED CAN MESSAGE FROM HIGH LEVEL WITH ID: " + String(canId, HEX));
@@ -156,6 +159,8 @@ void Vehicle::recieveCan() {  //need to ADD ALL the other CAN IDs possible (RC i
       desired_speed_mmPs = 0;
 			eStop();
     }
+  } else{
+    Serial.println("No CAN message?!?!");
   }
 	interrupts();
 }
